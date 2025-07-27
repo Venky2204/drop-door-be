@@ -15,6 +15,8 @@ import com.dropdoor.dto.response.ApiResponse;
 import com.dropdoor.dto.response.JwtAuthResponse;
 import com.dropdoor.repository.UserRepository;
 import com.dropdoor.service.AuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.validation.Valid;
 
@@ -28,15 +30,17 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
-
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JwtAuthResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    	logger.info("Login Request: {}", loginRequest);
         JwtAuthResponse response = authService.authenticateUser(loginRequest);
         return ResponseEntity.ok(response);
-    }
+    }	
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+    	logger.info("registerRequest : {}", registerRequest);
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
